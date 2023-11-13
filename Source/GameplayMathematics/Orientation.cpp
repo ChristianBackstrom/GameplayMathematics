@@ -38,21 +38,21 @@ void AOrientation::Tick(float DeltaTime)
 	// Right and Left check
 	if (FVector::DotProduct(BaseRight, RelativeDirection) >= .9f || FVector::DotProduct(-BaseRight, RelativeDirection) >= .9f)
 	{
-		DrawDebugLine(GetWorld(), BaseActorLocation, TestActorLocation, FColor::Red);
+		DrawDebugLine(GetWorld(), BaseActorLocation, TestActorLocation, FColor::Red, false, -1, 0, 5);
 		return;
 	}
 
 	// Above and Below check
 	if (FVector::DotProduct(BaseUp, RelativeDirection) >= .9f || FVector::DotProduct(-BaseUp, RelativeDirection) >= .9f)
 	{
-		DrawDebugLine(GetWorld(), BaseActorLocation, TestActorLocation, FColor::Green);
+		DrawDebugLine(GetWorld(), BaseActorLocation, TestActorLocation, FColor::Green, false, -1, 0, 5);
 		return;
 	}
 
 	// Forward and Behind check
 	if (FVector::DotProduct(BaseForward, RelativeDirection) >= .9f || FVector::DotProduct(-BaseForward, RelativeDirection) >= .9f)
 	{
-		DrawDebugLine(GetWorld(), BaseActorLocation, TestActorLocation, FColor::Blue);
+		DrawDebugLine(GetWorld(), BaseActorLocation, TestActorLocation, FColor::Blue, false, -1, 0, 5);
 		return;
 	}
 
