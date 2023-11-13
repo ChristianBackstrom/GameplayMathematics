@@ -31,7 +31,7 @@ void AIntersection::Tick(float DeltaTime)
 	{
 		FVector location = BaseActor->GetActorLocation() + intersectionSphere.RelativeLocation;
 		
-		FColor color = FVector::Distance(location, testActorLocation) < intersectionSphere.Radius ? FColor::Green : FColor::Red;
+		FColor color = FVector::Distance(location, testActorLocation) < intersectionSphere.Radius + (100 * TestActor->GetActorScale3D().X)/2 ? FColor::Green : FColor::Red;
 
 		DrawDebugSphere(GetWorld(), location, intersectionSphere.Radius, 10, color, false, -1, 0, 5);
 	}
