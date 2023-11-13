@@ -43,10 +43,16 @@ void AInterpolation::IncrementIndex()
 	Time = 0;
 }
 
+FVector AInterpolation::GetLerpedLocation(FVector A, FVector B, float Alpha)
+{
+	return FMath::Lerp(A, B, Time);
+}
+
 // Called every frame
 void AInterpolation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (!IsValid(BaseActor) || !IsValid(TestActor)) return;
 
 	Time += DeltaTime / Duration;
 	Time = FMath::Clamp(Time, 0.f, 1.f);
@@ -54,9 +60,7 @@ void AInterpolation::Tick(float DeltaTime)
 	FVector Start = Locations[PreviousIndex];
 	FVector End = Locations[Index];
 
-	FVector LerpedLocation = FMath::Lerp(Start, End, Time);
-
-	TestActor->SetActorLocation(LerpedLocation);
+	TestActor->SetActorLocation(GetLerpedLocation(Start, End, Time));
 
 	if (Time >= 1.f)
 	{

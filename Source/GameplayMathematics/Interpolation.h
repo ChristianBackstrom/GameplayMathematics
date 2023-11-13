@@ -38,6 +38,8 @@ protected:
 
 	void IncrementIndex();
 
+	virtual FVector GetLerpedLocation(FVector A, FVector B, float Alpha);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
