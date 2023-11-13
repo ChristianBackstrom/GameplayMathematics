@@ -23,5 +23,38 @@ void AOrientation::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!IsValid(BaseActor) || !IsValid(TestActor)) return;
+
+	FVector BaseActorLocation = BaseActor->GetActorLocation();
+	FVector TestActorLocation = TestActor->GetActorLocation();
+	if (FVector::Distance(BaseActorLocation, TestActorLocation) > TriggerDistance) return;
+	
+	FVector RelativeDirection = (BaseActorLocation - TestActorLocation).GetSafeNormal();
+	
+	FVector BaseRight = BaseActor->GetActorRightVector();
+	FVector BaseUp = BaseActor->GetActorUpVector();
+	FVector BaseForward = BaseActor->GetActorForwardVector();
+
+	// Right and Left check
+	if (FVector::DotProduct(BaseRight, RelativeDirection) >= .9f || FVector::DotProduct(-BaseRight, RelativeDirection) >= .9f)
+	{
+		DrawDebugLine(GetWorld(), BaseActorLocation, TestActorLocation, FColor::Red);
+		return;
+	}
+
+	// Above and Below check
+	if (FVector::DotProduct(BaseUp, RelativeDirection) >= .9f || FVector::DotProduct(-BaseUp, RelativeDirection) >= .9f)
+	{
+		DrawDebugLine(GetWorld(), BaseActorLocation, TestActorLocation, FColor::Green);
+		return;
+	}
+
+	// Forward and Behind check
+	if (FVector::DotProduct(BaseForward, RelativeDirection) >= .9f || FVector::DotProduct(-BaseForward, RelativeDirection) >= .9f)
+	{
+		DrawDebugLine(GetWorld(), BaseActorLocation, TestActorLocation, FColor::Blue);
+		return;
+	}
+
 }
 
