@@ -50,4 +50,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	static bool SphereSphereIntersection(FVector ALocation, float ARadius, FVector BLocation, float BRadius, FVector& ContactPoint);
+	
+	// Line-Sphere Intersection
+	UFUNCTION(BlueprintCallable, Category = "Intersection")
+	static bool RaySphere(const FVector Origin, const FVector Direction, const FVector Center, const float Radius, FVector& ContactPoint);
+
 };
