@@ -21,9 +21,12 @@ void APerlinNoiseFlowField::BeginPlay()
 	Box.Max = FVector(FlowFieldSize.X, FlowFieldSize.Y, 1) * 100;
 	Box.Min = FVector::UpVector;
 
-	FVector spawnLocation = FMath::RandPointInBox(Box);
+	for (int i = 0; i < BallAmount; ++i)
+	{
+		FVector spawnLocation = FMath::RandPointInBox(Box);
 	
-	PhysicsBall = GetWorld()->SpawnActor<APhysicsBall>(spawnLocation, FRotator::ZeroRotator);
+		PhysicsBalls.Add(GetWorld()->SpawnActor<APhysicsBall>(spawnLocation, FRotator::ZeroRotator));
+	}
 	
 	for (int x = 0; x < FlowFieldSize.X; ++x)
 	{
@@ -46,9 +49,12 @@ void APerlinNoiseFlowField::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UWorld* World = GetWorld();
+	const UWorld* World = GetWorld();
 
-	PhysicsBall->StaticMesh->AddForce(FVector::ForwardVector * 982.f);
+	for (const auto PhysicsBall : PhysicsBalls)
+	{
+		PhysicsBall->StaticMesh->AddForce(FVector::ForwardVector * 982.f);
+	}
 
 	Time += DeltaTime * TimeScale;
 
@@ -61,31 +67,36 @@ void APerlinNoiseFlowField::Tick(float DeltaTime)
 			FVector location = FVector::One() * 100;
 			location.X *= FlowNode->Index.X;
 			location.Y *= FlowNode->Index.Y;
-		
-			float perlinNoise = FMath::PerlinNoise2D(GetSeededLocation(FlowNode->Index.X + Time, FlowNode->Index.Y + Time)) * 2;
+
+			const float perlinNoise = FMath::PerlinNoise2D(GetSeededLocation(FlowNode->Index.X + Time, FlowNode->Index.Y + Time)) * 2;
 			FVector direction = FVector(1,0,0).RotateAngleAxisRad(pi * perlinNoise, FVector::UpVector);
 			FlowNode->Direction = direction;
 
 			// DrawDebugLine(World, location, location + FlowNode.Direction * 100, FColor::Red, false,-1,0, 5);
-			DrawDebugDirectionalArrow(World, location, location + direction * 100, 100, FColor::Red, false, -1, 0, 10.f);
+			if (ShowDebugArrows)
+				DrawDebugDirectionalArrow(World, location, location + direction * 100, 100, FColor::Red, false, -1, 0, 10.f);
 		}
 	}
-	FVector totalSize = FVector(FlowFieldSize.X * 100, FlowFieldSize.Y * 100, 1);  
-	FVector ballLocation = PhysicsBall->GetActorLocation();
-	if (ballLocation.X > totalSize.X || ballLocation.X < 0 || ballLocation.Y > totalSize.Y || ballLocation.Y < 0)
-	{
-		FBox Box = FBox();
-		Box.Max = totalSize;
-		Box.Min = FVector::UpVector;
-
-		FVector randomLocation = FMath::RandPointInBox(Box);
-		PhysicsBall->SetActorLocation(randomLocation);
-		PhysicsBall->StaticMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);
-	}
 	
-	if (FFlowNode* node = GetClosestNode(PhysicsBall->GetActorLocation()); node != nullptr)
+	const FVector totalSize = FVector(FlowFieldSize.X * 100, FlowFieldSize.Y * 100, 1);
+	for (const auto PhysicsBall : PhysicsBalls)
 	{
-		PhysicsBall->StaticMesh->AddForce(node->Direction * BallForce);
+		const FVector ballLocation = PhysicsBall->GetActorLocation();
+		if (ballLocation.X > totalSize.X || ballLocation.X < 0 || ballLocation.Y > totalSize.Y || ballLocation.Y < 0)
+		{
+			FBox Box = FBox();
+			Box.Max = totalSize;
+			Box.Min = FVector::UpVector;
+
+			FVector randomLocation = FMath::RandPointInBox(Box);
+			PhysicsBall->SetActorLocation(randomLocation);
+			PhysicsBall->StaticMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);
+		}
+	
+		if (FFlowNode* node = GetClosestNode(PhysicsBall->GetActorLocation()); node != nullptr)
+		{
+			PhysicsBall->StaticMesh->AddForce(node->Direction * BallForce);
+		}
 	}
 }
 

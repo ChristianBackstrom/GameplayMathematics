@@ -44,14 +44,20 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
+	bool ShowDebugArrows = true;
+
+	UPROPERTY(EditAnywhere)
 	FIntVector2 FlowFieldSize;
 
 	UPROPERTY(EditAnywhere)
 	float Zoom;
 
 	UPROPERTY()
-	APhysicsBall* PhysicsBall;
+	TArray<APhysicsBall*> PhysicsBalls;
 
+	UPROPERTY(EditAnywhere)
+	int BallAmount = 10;
+	
 	UPROPERTY(EditAnywhere)
 	float BallForce = 100;
 
