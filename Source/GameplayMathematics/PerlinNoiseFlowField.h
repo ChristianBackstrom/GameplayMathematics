@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PhysicsBall.h"
 #include "GameFramework/Actor.h"
 #include "PerlinNoiseFlowField.generated.h"
 USTRUCT()
@@ -48,11 +49,19 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float Zoom;
 
+	UPROPERTY()
+	APhysicsBall* PhysicsBall;
+
+	UPROPERTY(EditAnywhere)
+	float BallForce = 100;
+
 	UPROPERTY(VisibleAnywhere)
 	TMap<FIntVector2, FFlowNode> Nodes;
 
 	FVector2D GetSeededLocation(float x, float y);
 
+	FFlowNode* GetClosestNode(FVector location);
+	
 	const float pi = PI;
 
 	float Time = 0;
